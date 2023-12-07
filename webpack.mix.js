@@ -1,2 +1,2 @@
 import mix from "laravel-mix"
-mix.ts('resources/js/app.ts', 'public/js')
+mix.ts('resources/js/app.js', 'public/js')
