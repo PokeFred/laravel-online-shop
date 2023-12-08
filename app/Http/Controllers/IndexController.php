@@ -2,38 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
-use \Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class IndexController extends Controller {
     public function show(): View {
-        $rawData = DB::table("products")->get();
+        $products = array(
+            array(
+                "id" => 1
+            ),
+            array(
+                "id" => 2
+            ),
+            array(
+                "id" => 3
+            )
+        );
 
-        $currentPage = is_numeric(request()->page) ? request()->page : 0;
-        $elementsPerPage = 5; // is_numeric(request()->limit) ? request()->limit : 10;
-        $elementsCounter = $rawData->count();
-        $maxPages = ceil($elementsCounter / $elementsPerPage);
-        $data = DB::table("products")
-            ->skip($currentPage * $elementsPerPage)
-            ->take($elementsPerPage)
-            ->get();
+        $data = array(
+            "products" => $products
+        );
+        /*
+        {
+            "id": 1,
+            "title": "iPhone 9",
+            "description": "An apple mobile which is nothing like apple",
+            "price": 549,
+            "discountPercentage": 12.96,
+            "rating": 4.69,
+            "stock": 94,
+            "brand": "Apple",
+            "category": "smartphones",
+            "thumbnail": "https://i.dummyjson.com/data/products/1/thumbnail.jpg",
+            "images": [
+                "https://i.dummyjson.com/data/products/1/1.jpg",
+                "https://i.dummyjson.com/data/products/1/2.jpg",
+                "https://i.dummyjson.com/data/products/1/3.jpg",
+                "https://i.dummyjson.com/data/products/1/4.jpg",
+                "https://i.dummyjson.com/data/products/1/thumbnail.jpg"
+            ]
+        }
+        */
 
-        $previousPage = $currentPage - 1;
-        $nextPage = $currentPage + 1;
+        //$data = json_decode(Storage::disk("local")->get("products.json"));
 
-        // checks to have all values right
-        $previousPage = ($previousPage > 0) ? (($previousPage < $maxPages) ? $previousPage : $maxPages) : 0;
-        $nextPage = ($nextPage > 0) ? (($nextPage < $maxPages) ? $nextPage : $maxPages) : 0;
-
-        return view("index")
-            ->with("data", $data)
-            ->with("pages", array(
-                "first" => 0,
-                "previous" => $previousPage,
-                "current" => $currentPage,
-                "next" => $nextPage,
-                "last" => $maxPages
-            ));
+        return view("index", ["data" => $data]);
     }
 }
